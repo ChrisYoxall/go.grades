@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"grades/log"
+	"grades/registry"
 	"grades/service"
 	stlog "log"
 )
@@ -11,9 +12,13 @@ import (
 func main() {
 	log.Run("./app.log")
 
-	port := "4000"
+	host, port := "localhost", "4000"
+	serviceAddress := fmt.Sprintf("http://%v:%v", host, port)
 
-	ctx, err := service.Start(context.Background(), "Log Service", port, log.RegisterHandlers)
+	var r registry.Registration
+	r.ServiceName = registry.LogService
+	r.ServiceURL = serviceAddress
+	ctx, err := service.Start(context.Background(), r, host, port, log.RegisterHandlers)
 	if err != nil {
 		stlog.Fatal(err)
 	}

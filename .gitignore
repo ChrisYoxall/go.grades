@@ -1,3 +1,6 @@
 **.idea
 
+# Application files
+logservice
+registryservice
 app.log

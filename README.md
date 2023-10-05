@@ -1,6 +1,6 @@
 # go.grades #
 
-Simple distributed system using Go only.
+Simple distributed system using Go from 'Building Distributed Applications with Go' by Mike Van Sickle on Pluralsight.
 
 Has the following components:
 - Service Registry: Responsible for registering and de-registering services & health monitoring.
@@ -14,6 +14,10 @@ Might look at re-building this using something like https://github.com/go-micro/
 
 
 ## To Run ##
+
+Make sure to start the registry service first.
+
+Run the registry service: go build grades/cmd/registryservice && ./registryservice
 
 Run the log service: go build grades/cmd/logservice && ./logservice
 
