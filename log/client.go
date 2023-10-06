@@ -11,12 +11,15 @@ import (
 func SetClientLogger(serviceURL string, clientService registry.ServiceName) {
 	stlog.SetPrefix(fmt.Sprintf("[%v] - ", clientService))
 	stlog.SetFlags(0)
-	stlog.SetOutput(&clientLogger{url: serviceURL})
+	logger = clientLogger{url: serviceURL}
+	stlog.SetOutput(&logger)
 }
 
 type clientLogger struct {
 	url string
 }
+
+var logger clientLogger
 
 func (cl clientLogger) Write(data []byte) (int, error) {
 	b := bytes.NewBuffer(data)
@@ -28,4 +31,11 @@ func (cl clientLogger) Write(data []byte) (int, error) {
 		return 0, fmt.Errorf("failed to send log message. Service responded with %v - %v", res.StatusCode, res.Status)
 	}
 	return len(data), nil
+}
+
+func Debug(m string) {
+	_, err := logger.Write([]byte("[DEBUG] " + m))
+	if err != nil {
+		stlog.Fatalf("Could not write log message: %v", err)
+	}
 }

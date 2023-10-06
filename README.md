@@ -29,5 +29,7 @@ Run the log service: go build grades/cmd/logservice && ./logservice
 
 Run the grading service: go build grades/cmd/gradingservice && ./gradingservice
 
+Run the teacher portal: go build grades/cmd/teacherportal && ./teacherportal
+
 Send a request to the log service: curl -XPOST -d "Log this" http://localhost:4000/log
 

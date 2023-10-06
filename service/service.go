@@ -42,7 +42,7 @@ func startService(ctx context.Context, serviceName registry.ServiceName, host st
 		sigCh := make(chan os.Signal)
 		defer close(sigCh)
 		signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
-		fmt.Printf("%v started. Press ctrl+c to stop.\n", serviceName)
+		fmt.Printf("%v started at http://%v:%v. Press ctrl+c to stop.\n", serviceName, host, port)
 		<-sigCh
 
 		err := registry.ShutdownService(fmt.Sprintf("http://%s:%s", host, port))
