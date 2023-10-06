@@ -36,6 +36,6 @@ func (cl clientLogger) Write(data []byte) (int, error) {
 func Debug(m string) {
 	_, err := logger.Write([]byte("[DEBUG] " + m))
 	if err != nil {
-		stlog.Fatalf("Could not write log message: %v", err)
+		stlog.Printf("Could not write log message: %v", err)
 	}
 }

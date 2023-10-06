@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"sync"
+	"time"
 )
 
 const ServerPort = ":3000"
@@ -67,6 +68,53 @@ func (r *registry) notify(fullPatch patch) {
 			}
 		}(reg)
 	}
+}
+
+func (r *registry) heartbeat(freq time.Duration) {
+	for {
+		var wg sync.WaitGroup
+		for _, reg := range r.registrations {
+			wg.Add(1)
+			go func(reg Registration) {
+				defer wg.Done()
+				success := true
+				for attempts := 0; attempts < 3; attempts++ {
+					res, err := http.Get(reg.HeartbeatURL)
+					if err != nil {
+						log.Println(err)
+					} else if res.StatusCode == http.StatusOK {
+						log.Printf("Heartbeat check passed for %v\n", reg.ServiceName)
+						if !success {
+							err := r.add(reg)
+							if err != nil {
+								log.Printf("Error adding service %v: %v\n", reg.ServiceName, err)
+							}
+						}
+						break
+					}
+					log.Printf("Heartbeat check failed for %v. Attempt %v\n", reg.ServiceName, attempts+1)
+					if success {
+						success = false
+						err := r.remove(reg.ServiceURL)
+						if err != nil {
+							log.Printf("Error removing service %v: %v\n", reg.ServiceName, err)
+						}
+					}
+					time.Sleep(1 * time.Second)
+				}
+			}(reg)
+			wg.Wait()
+			time.Sleep(freq)
+		}
+	}
+}
+
+var once sync.Once
+
+func SetupRegistryService() {
+	once.Do(func() {
+		go reg.heartbeat(3 * time.Second)
+	})
 }
 
 func (r *registry) sendRequiredServices(reg Registration) error {

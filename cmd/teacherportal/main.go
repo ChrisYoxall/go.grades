@@ -26,6 +26,7 @@ func main() {
 		registry.GradingService,
 	}
 	r.ServiceUpdateURL = r.ServiceURL + "/services"
+	r.HeartbeatURL = r.ServiceURL + "/heartbeat"
 
 	ctx, err := service.Start(context.Background(), r, host, port, portal.RegisterHandlers)
 	if err != nil {
@@ -38,7 +39,7 @@ func main() {
 		log.SetClientLogger(logProvider, r.ServiceName)
 
 		// Trying to use log service
-		//log.Debug("Log service found.")
+		log.Debug("Log service found.")
 	}
 
 	<-ctx.Done()
