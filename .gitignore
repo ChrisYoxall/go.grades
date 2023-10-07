@@ -1,7 +1,4 @@
 **.idea
 
 # Application files
-logservice
-registryservice
-gradingservice
 app.log
